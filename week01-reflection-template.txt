@@ -1,0 +1,37 @@
+# Week 01 Reflection
+
+1. Include a link to one of your Pull Requests (PRs) at GitHub. (It should be merged and closed at this point.)
+
+GitHub Pull Request Link: https://github.com/FrancoBrunini/cse341-books/issues/1
+
+2. Include a link to one of your Issues at GitHub. (It should be closed at this point.)
+
+GitHub Issue Link: https://github.com/francobrunini/cse341-books/issues/4
+
+3. Which issue took more or less time than expected? Why?
+
+Answer: The issue number 4 took more time because it I didn;t check that I had two url from render I didn't why wasn't working. But when I found the error, I could solve easily
+
+4. Include a link to your walk-though video. (It must include your name, show your web service working at Render, explain the way your `Get Single Book` controller works, and discuss status codes.):
+
+Video link:
+
+5.a. Include a GitHub link to a file that shows how your app uses sensitive data, such as the MongoDB connection string.
+
+GitHub link: https://github.com/francobrunini/cse341-books/blob/main/src/db/connect.js
+
+5.b. How did you store sensitive data? Why is that approach important?
+
+Answer: I stored in .gitignore where we dont commit, because it's not safe at all to have some kind of sensitive information in a piublic repository such as: MONGODB_URI
+
+6.a. Include a GitHub link to a file that shows one other implementation decision you made.
+
+GitHub link: https://github.com/francobrunini/cse341-books/blob/main/src/controllers/books.js
+
+6.b. What decision does this file show, and why did you make that choice?
+
+Answer: The files show how to separate from information from the server and the controller logic. Also helps to handle the errors, it checks if I we found the book or we didnt find.
+
+7. What is one specific habit or process you will work on for next week?
+
+Answer:I' going to work on doing things more organizated such as: creating branchs, working with teamates, having the same procceses as the course is asking.

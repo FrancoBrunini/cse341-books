@@ -14,7 +14,7 @@ Answer: The issue number 4 took more time because it I didn;t check that I had t
 
 4. Include a link to your walk-though video. (It must include your name, show your web service working at Render, explain the way your `Get Single Book` controller works, and discuss status codes.):
 
-Video link:
+Video link: https://missionary-org.zoom.us/rec/share/meArmQZRJIkV1iNuBiSakT-HS1slDUI3jttLd0j37qYttsXLOB6-eqEd-dL2fygn.QRr7NHagqkNl54rl?startTime=1788620846000
 
 5.a. Include a GitHub link to a file that shows how your app uses sensitive data, such as the MongoDB connection string.
 

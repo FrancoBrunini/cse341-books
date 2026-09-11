@@ -2,54 +2,40 @@ import { getDb } from '../db/connect.js';
 
 const getAllAuthors = async () => {
   const db = getDb();
-  const collection = db.collection('authors');
-  const authors = await collection.find({}).toArray();
-
-  return authors;
+  return await db.collection('authors').find({}).toArray();
 };
 
-const getAuthorById = async (authorId) => {
+const getAuthorById = async (id) => {
   const db = getDb();
-  const collection = db.collection('author');
-  const author = await collection.findOne({ id: authorId });
-  return author;
+  return await db.collection('authors').findOne({ id });
 };
 
 const createAuthor = async (authorData) => {
   const db = getDb();
-  const collection = db.collection('authors');
-  const result = await collection.insertOne(authorData);
+  const result = await db.collection('authors').insertOne(authorData);
   return { _id: result.insertedId, ...authorData };
 };
 
 const updateAuthor = async (id, updatedData) => {
   const db = getDb();
-  const collection = db.collection('authors');
-  
   const { id: bodyId, ...fieldsToUpdate } = updatedData;
 
-  const result = await collection.findOneAndUpdate(
+  return await db.collection('authors').findOneAndUpdate(
     { id },
     { $set: fieldsToUpdate },
     { returnDocument: 'after' }
   );
-  return result;
+};
+
+const authorHasBooks = async (id) => {
+  const db = getDb();
+  const count = await db.collection('books').countDocuments({ authorId: id });
+  return count > 0;
 };
 
 const deleteAuthor = async (id) => {
   const db = getDb();
-  
-  const booksCollection = db.collection('books');
-  const linkedBooksCount = await booksCollection.countDocuments({ authorId: id });
-  
-  if (linkedBooksCount > 0) {
-    const error = new Error('Cannot delete author linked to existing books. Remove or reassign books first.');
-    error.statusCode = 400;
-    throw error;
-  }
-
-  const authorsCollection = db.collection('authors');
-  const result = await authorsCollection.deleteOne({ id });
+  const result = await db.collection('authors').deleteOne({ id });
   return result.deletedCount > 0;
 };
 
@@ -58,5 +44,6 @@ export {
   getAuthorById,
   createAuthor,
   updateAuthor,
+  authorHasBooks,
   deleteAuthor
 };

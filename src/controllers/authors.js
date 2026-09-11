@@ -1,9 +1,10 @@
 import {
   getAllAuthors as getAllAuthorsFromDb,
   getAuthorById as getAuthorByIdFromDb,
-  createAuthor as createAuthorInDb,
-  updateAuthor as updateAuthorInDb,
-  deleteAuthor as deleteAuthorInDb
+  createAuthor as createAuthorFromDb,
+  updateAuthor as updateAuthorFromDb,
+  deleteAuthor as deleteAuthorFromDb,
+  authorHasBooks,
 } from '../models/authors.js';
 
 const getAllAuthors = async (req, res) => {
@@ -19,9 +20,11 @@ const getAuthorById = async (req, res) => {
   try {
     const { id } = req.params;
     const author = await getAuthorByIdFromDb(id);
+
     if (!author) {
       return res.status(404).json({ message: 'Author not found.' });
     }
+
     return res.status(200).json(author);
   } catch (error) {
     return res.status(500).json({ message: 'Unable to retrieve author.' });
@@ -33,22 +36,19 @@ const createAuthor = async (req, res) => {
     const { id, name, birthYear, nationality } = req.body;
 
     if (!id || !name || birthYear === undefined || !nationality) {
-      return res.status(400).json({ message: 'Missing required fields: id, name, birthYear, nationality.' });
-    }
-
-    const currentYear = new Date().getFullYear();
-    if (!Number.isInteger(birthYear) || birthYear < 0 || birthYear > currentYear) {
-      return res.status(400).json({ message: `birthYear must be a valid integer less than or equal to ${currentYear}.` });
+      return res.status(400).json({ message: 'Missing required author fields: id, name, birthYear, nationality.' });
     }
 
     const existingAuthor = await getAuthorByIdFromDb(id);
     if (existingAuthor) {
-      return res.status(400).json({ message: `Author with id '${id}' already exists.` });
+      return res.status(400).json({ message: 'Author id already exists.' });
     }
 
-    const newAuthor = await createAuthorInDb({ id, name, birthYear, nationality });
-    return res.status(201).json(newAuthor);
+    const createdAuthor = await createAuthorFromDb({ id, name, birthYear, nationality });
+    return res.status(201).json(createdAuthor);
+
   } catch (error) {
+    console.error('Error in createAuthor:', error); 
     return res.status(500).json({ message: 'Unable to create author.' });
   }
 };
@@ -56,15 +56,10 @@ const createAuthor = async (req, res) => {
 const updateAuthor = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, birthYear, nationality } = req.body;
+    const { name, birthYear } = req.body;
 
-    if (!name || birthYear === undefined || !nationality) {
-      return res.status(400).json({ message: 'Missing required fields: name, birthYear, nationality.' });
-    }
-
-    const currentYear = new Date().getFullYear();
-    if (!Number.isInteger(birthYear) || birthYear < 0 || birthYear > currentYear) {
-      return res.status(400).json({ message: `birthYear must be a valid integer less than or equal to ${currentYear}.` });
+    if (!name || birthYear === undefined) {
+      return res.status(400).json({ message: 'Missing required author fields.' });
     }
 
     const existingAuthor = await getAuthorByIdFromDb(id);
@@ -72,7 +67,7 @@ const updateAuthor = async (req, res) => {
       return res.status(404).json({ message: 'Author not found.' });
     }
 
-    const updatedAuthor = await updateAuthorInDb(id, { name, birthYear, nationality });
+    const updatedAuthor = await updateAuthorFromDb(id, { name, birthYear });
     return res.status(200).json(updatedAuthor);
   } catch (error) {
     return res.status(500).json({ message: 'Unable to update author.' });
@@ -88,20 +83,15 @@ const deleteAuthor = async (req, res) => {
       return res.status(404).json({ message: 'Author not found.' });
     }
 
-    await deleteAuthorInDb(id);
+    if (await authorHasBooks(id)) {
+      return res.status(409).json({ message: 'Author cannot be deleted because they still have books.' });
+    }
+
+    await deleteAuthorFromDb(id);
     return res.status(204).send();
   } catch (error) {
-    if (error.statusCode === 400) {
-      return res.status(400).json({ message: error.message });
-    }
     return res.status(500).json({ message: 'Unable to delete author.' });
   }
 };
 
-export {
-  getAllAuthors,
-  getAuthorById,
-  createAuthor,
-  updateAuthor,
-  deleteAuthor
-};
+export { getAllAuthors, getAuthorById, createAuthor, updateAuthor, deleteAuthor };

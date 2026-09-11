@@ -1,11 +1,11 @@
 import express from 'express';
 import { getBooksHandler, getBookByIdHandler } from './controllers/books.js';
 import {
-  getAllAuthors,
-  getAuthorById,
-  createAuthor,
-  updateAuthor,
-  deleteAuthor
+	getAllAuthors,
+	getAuthorById,
+	createAuthor,
+	updateAuthor,
+	deleteAuthor,
 } from './controllers/authors.js';
 const router = express.Router();
 
@@ -111,6 +111,7 @@ router.get('/books', getBooksHandler);
  */
 router.get('/books/:id', getBookByIdHandler);
 /**
+/**
  * @openapi
  * /authors:
  *   get:
@@ -129,7 +130,7 @@ router.get('/authors', getAllAuthors);
  * @openapi
  * /authors/{id}:
  *   get:
- *     summary: Get an author by custom ID
+ *     summary: Get author by ID
  *     tags:
  *       - Authors
  *     parameters:
@@ -138,10 +139,10 @@ router.get('/authors', getAllAuthors);
  *         required: true
  *         schema:
  *           type: string
- *         example: a1
+ *         description: The author ID.
  *     responses:
  *       200:
- *         description: Author found
+ *         description: A single author
  *       404:
  *         description: Author not found
  *       500:
@@ -153,7 +154,7 @@ router.get('/authors/:id', getAuthorById);
  * @openapi
  * /authors:
  *   post:
- *     summary: Create a new author
+ *     summary: Create an author
  *     tags:
  *       - Authors
  *     requestBody:
@@ -166,25 +167,22 @@ router.get('/authors/:id', getAuthorById);
  *               - id
  *               - name
  *               - birthYear
- *               - nationality
  *             properties:
  *               id:
  *                 type: string
- *                 example: a3
  *               name:
  *                 type: string
- *                 example: Gabriel García Márquez
  *               birthYear:
- *                 type: integer
- *                 example: 1927
- *               nationality:
- *                 type: string
- *                 example: Colombian
+ *                 type: number
+ *           example:
+ *             id: a4
+ *             name: Example Author
+ *             birthYear: 1980
  *     responses:
  *       201:
- *         description: Author created successfully
+ *         description: Author created
  *       400:
- *         description: Invalid input or duplicate ID
+ *         description: Missing required author fields or author ID already exists
  *       500:
  *         description: Unable to create author
  */
@@ -194,7 +192,7 @@ router.post('/authors', createAuthor);
  * @openapi
  * /authors/{id}:
  *   put:
- *     summary: Update an existing author
+ *     summary: Update an author by ID
  *     tags:
  *       - Authors
  *     parameters:
@@ -203,7 +201,7 @@ router.post('/authors', createAuthor);
  *         required: true
  *         schema:
  *           type: string
- *         example: a1
+ *         description: The author ID.
  *     requestBody:
  *       required: true
  *       content:
@@ -213,22 +211,19 @@ router.post('/authors', createAuthor);
  *             required:
  *               - name
  *               - birthYear
- *               - nationality
  *             properties:
  *               name:
  *                 type: string
- *                 example: Jane Austen
  *               birthYear:
- *                 type: integer
- *                 example: 1775
- *               nationality:
- *                 type: string
- *                 example: British
+ *                 type: number
+ *           example:
+ *             name: Updated Author
+ *             birthYear: 1981
  *     responses:
  *       200:
- *         description: Author updated successfully
+ *         description: Author updated
  *       400:
- *         description: Invalid input
+ *         description: Missing required author fields
  *       404:
  *         description: Author not found
  *       500:
@@ -240,7 +235,7 @@ router.put('/authors/:id', updateAuthor);
  * @openapi
  * /authors/{id}:
  *   delete:
- *     summary: Delete an author
+ *     summary: Delete an author by ID
  *     tags:
  *       - Authors
  *     parameters:
@@ -249,14 +244,14 @@ router.put('/authors/:id', updateAuthor);
  *         required: true
  *         schema:
  *           type: string
- *         example: a3
+ *         description: The author ID.
  *     responses:
  *       204:
- *         description: Author deleted successfully
- *       400:
- *         description: Cannot delete author linked to existing books
+ *         description: Author deleted
  *       404:
  *         description: Author not found
+ *       409:
+ *         description: Author cannot be deleted because they still have books
  *       500:
  *         description: Unable to delete author
  */
